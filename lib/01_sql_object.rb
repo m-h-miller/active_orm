@@ -6,21 +6,18 @@ require 'byebug'
 
 class SQLObject
   def self.columns
-
-    columns = DBConnection.execute2(<<-SQL)
+    return @columns if @columns
+    cols = DBConnection.execute2(<<-SQL)
       SELECT
         *
       FROM
         "#{self.table_name}"
     SQL
-
-    columns = columns.first.map(&:to_sym)
-
+    @columns = cols.first.map(&:to_sym)
   end
 
   def self.finalize!
     self.columns.each do |col|
-
       define_method(col) do
         attributes[col]
       end
@@ -28,12 +25,11 @@ class SQLObject
       define_method("#{col}=") do |value|
         attributes[col] = value
       end
-
     end
   end
 
-  def self.table_name=(value)
-    @table_name = value
+  def self.table_name=(table_name)
+    @table_name = table_name
   end
 
   def self.table_name
@@ -42,7 +38,6 @@ class SQLObject
 
   def self.all
     table = self.table_name
-
     results = DBConnection.execute(<<-SQL)
       SELECT
         #{table}.*
@@ -78,10 +73,9 @@ class SQLObject
   def initialize(params = {})
     params.each_pair do |attr_name, value|
       raise "unknown attribute '#{attr_name}'" unless self.class.columns.include? attr_name.to_sym
-      sender = attr_name.to_s + "="
+      sender = "{attr_name}="
       self.send(sender, value)
     end
-
   end
 
   def attributes
@@ -89,8 +83,9 @@ class SQLObject
   end
 
   def attribute_values
-    attributes.values
+    self.class.columns.map { |attr| self.send(attr) }
   end
+
 
   def insert
     table_name = self.class.to_s.tableize
