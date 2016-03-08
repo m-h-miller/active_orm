@@ -1,7 +1,6 @@
-require_relative '02_searchable'
+require_relative 'searchable'
 require 'active_support/inflector'
 
-# Phase IIIa
 class AssocOptions
   attr_accessor(
     :foreign_key,
@@ -14,38 +13,39 @@ class AssocOptions
   end
 
   def table_name
-    class_name.downcase.underscore + "s"
+    model_class.table_name
   end
 end
 
 class BelongsToOptions < AssocOptions
   def initialize(name, options = {})
-    @class_name = "#{name.capitalize.singularize.camelcase}"
-    @primary_key = :id
-    @foreign_key = (name.to_s.downcase + "_id").to_sym
+    self.foreign_key = options[:foreign_key]
+    self.primary_key = options[:primary_key]
+    self.class_name  = options[:class_name]
 
-    options.each_pair do |k,v|
-      instance_variable_set("@#{k}", v)
-    end
+    self.foreign_key ||= "#{name}_id".to_sym
+    self.primary_key ||= :id
+    self.class_name  ||= name.to_s.camelcase.singularize
   end
 end
 
 class HasManyOptions < AssocOptions
   def initialize(name, self_class_name, options = {})
-    @class_name = name.singularize.capitalize
-    @primary_key = :id
-    @foreign_key = (self_class_name.downcase.singularize + "_id").to_sym
+    self.foreign_key = options[:foreign_key]
+    self.primary_key = options[:primary_key]
+    self.class_name  = options[:class_name]
 
-    options.each_pair do |k,v|
-      instance_variable_set("@#{k}", v)
-    end
+    #defaults
+    self.foreign_key ||= "#{self_class_name.underscore}_id".to_sym
+    self.primary_key ||= :id
+    self.class_name  ||= name.to_s.camelcase.singularize
   end
 end
 
 module Associatable
   # Phase IIIb
   def belongs_to(name, params = {})
-    
+
   end
 
   def has_many(name, options = {})

@@ -1,8 +1,6 @@
 require_relative 'db_connection'
 require 'active_support/inflector'
 require 'byebug'
-# NB: the attr_accessor we wrote in phase 0 is NOT used in the rest
-# of this project. It was only a warm up.
 
 class SQLObject
   def self.columns
@@ -44,7 +42,6 @@ class SQLObject
       FROM
         #{table}
     SQL
-
     results = parse_all(results)
   end
 
@@ -57,7 +54,6 @@ class SQLObject
 
   def self.find(id)
     table = self.table_name
-
     query = DBConnection.execute(<<-SQL, id)
       SELECT
         *
@@ -66,7 +62,6 @@ class SQLObject
       WHERE
         #{table}.id = ?
     SQL
-
     query.empty? ? nil : self.new(query.first)
   end
 
