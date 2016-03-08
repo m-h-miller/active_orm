@@ -66,9 +66,9 @@ class SQLObject
   end
 
   def initialize(params = {})
-    params.each_pair do |attr_name, value|
+    params.each do |attr_name, value|
       raise "unknown attribute '#{attr_name}'" unless self.class.columns.include? attr_name.to_sym
-      sender = "{attr_name}="
+      sender = "#{attr_name}="
       self.send(sender, value)
     end
   end
@@ -119,7 +119,7 @@ class SQLObject
   end
 
   def save
-    id ? insert : update
+    id.nil? ? insert : update
   end
 
 end
