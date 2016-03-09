@@ -11,14 +11,14 @@ describe SQLObject do
     end
 
     class Human < SQLObject
-      self.table_name = 'humans'
+      self.table_name= 'humans'
 
       self.finalize!
     end
   end
 
-  describe '::set_table/::table_name' do
-    it '::set_table_name sets table name' do
+  describe '::table_name=' do
+    it '::table_name= sets table name' do
       expect(Human.table_name).to eq('humans')
     end
 
