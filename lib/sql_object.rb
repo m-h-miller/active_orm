@@ -15,13 +15,13 @@ class SQLObject
   end
 
   def self.finalize!
-    self.columns.each do |col|
-      define_method(col) do
-        attributes[col]
+    self.columns.each do |column|
+      define_method(column) do
+        attributes[column]
       end
 
-      define_method("#{col}=") do |value|
-        attributes[col] = value
+      define_method("#{column}=") do |value|
+        attributes[column] = value
       end
     end
   end
