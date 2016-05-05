@@ -1,6 +1,5 @@
 require_relative 'db_connection'
 require 'active_support/inflector'
-require 'byebug'
 
 class SQLObject
   def self.columns
@@ -66,12 +65,17 @@ class SQLObject
   end
 
   def initialize(params = {})
-    params.each do |attr_name, value|
-      raise "unknown attribute '#{attr_name}'" unless self.class.columns.include? attr_name.to_sym
-      sender = "#{attr_name}="
-      self.send(sender, value)
+    params.each do |attr_name, val|
+      attr_name = attr_name.to_sym
+
+      unless self.class.columns.include?(attr_name)
+        raise "unknown attribute '#{attr_name}'"
+      end
+
+      self.send("#{attr_name}=", val)
     end
   end
+
 
   def attributes
     @attributes ||= {}

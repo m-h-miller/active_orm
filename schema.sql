@@ -1,4 +1,4 @@
-CREATE TABLE cats (
+CREATE TABLE dogs (
   id INTEGER PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   owner_id INTEGER,
@@ -34,7 +34,7 @@ VALUES
   (4, "Catless", "Human", NULL);
 
 INSERT INTO
-  cats (id, name, owner_id)
+  dogs (id, name, owner_id)
 VALUES
   (1, "Breakfast", 1),
   (2, "Earl", 2),
